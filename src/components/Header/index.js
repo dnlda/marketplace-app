@@ -1,14 +1,28 @@
 import React, { useState } from "react";
-import SearchInput from "./HeadersDetails/SearchInput"; // Импортируем SearchInput
+import { useSelector } from "react-redux";
+import SearchInput from "./HeadersDetails/SearchInput";
 import { ReactComponent as Cart } from "../../img/cart_blue.svg";
+import { ReactComponent as CartWhite } from "../../img/cart.svg";
+import ProductCategories from "./HeadersDetails/CategoryProducts";
+import ModalWindow from "./HeadersDetails/Modal";
+import Badge from "@mui/material/Badge";
 
 const Header = ({ onSearch }) => {
   const [isSearchActive, setSearchActive] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const productInCart = useSelector((state) => state.cart);
 
-  console.log(isSearchActive);
-
+  const productArray = productInCart.cart;
   const handleSearchActiveChange = (newValue) => {
     setSearchActive(newValue);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -31,20 +45,13 @@ const Header = ({ onSearch }) => {
         onSearch={onSearch}
         onSearchActiveChange={handleSearchActiveChange}
       />
-      {!isSearchActive && (
-        <div
-          style={{ width: "100%", height: "28px", backgroundColor: "white" }}
-        >
-          {" "}
-          All PHONES TITITIT PARFUME
-        </div>
-      )}
+      {!isSearchActive && <ProductCategories />}
       <div
         style={{
           width: "71px",
           height: "24px",
-          backgroundColor: "white",
-          color: "blue",
+          backgroundColor: productArray.length > 0 ? "blue" : "white",
+          color: productArray.length > 0 ? "white" : "blue",
           display: "flex",
           flexDirection: "row",
           position: "relative",
@@ -55,10 +62,28 @@ const Header = ({ onSearch }) => {
           padding: "2px 4px 2px 4px",
           marginRight: "14px",
         }}
+        onClick={handleOpenModal}
       >
-        <Cart style={{ width: "20px", height: "20px", color: "blue" }} />
-        Cart
+        {productArray.length > 0 ? (
+          <CartWhite
+            style={{ width: "20px", height: "20px", color: "white" }}
+          />
+        ) : (
+          <Cart style={{ width: "20px", height: "20px", color: "blue" }} />
+        )}
+        <Badge
+          badgeContent={productArray.length}
+          sx={{
+            "& .MuiBadge-badge": {
+              backgroundColor: "white",
+              color: "blue",
+            },
+          }}
+        >
+          Cart
+        </Badge>
       </div>
+      <ModalWindow open={isModalOpen} onClose={handleCloseModal} />
     </header>
   );
 };

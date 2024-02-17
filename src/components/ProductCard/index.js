@@ -8,8 +8,10 @@ import {
   Button,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import { useSelector } from "react-redux";
 import { ReactComponent as RatingStar } from "../../img/Star.svg";
 import { ReactComponent as Cart } from "../../img/cart.svg";
+import { ReactComponent as CartBlue } from "../../img/cart_blue.svg";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   width: "320px",
@@ -36,12 +38,24 @@ const Cheap = styled(CardContent)(({ theme }) => ({
   gap: "4px",
 }));
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, addToCart }) => {
   const [isDefaultCard, setIsDefaultCard] = useState(true);
   const [activeDot, setActiveDot] = useState(0);
   const [activeImage, setActiveImage] = useState(product.images[0]);
   const [isHovered, setIsHovered] = useState(false);
 
+  const productInCart = useSelector((state) => state.cart);
+
+  const productArray = productInCart.cart;
+
+  const isProductInCart = () => {
+    return productArray.some(
+      (productArray) => productArray.title === product.title
+    );
+  };
+
+  const isInCart = isProductInCart();
+  console.log(isInCart);
 
   const handleShowDefault = () => {
     setIsDefaultCard(true);
@@ -61,8 +75,12 @@ const ProductCard = ({ product }) => {
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false); 
+    setIsHovered(false);
   };
+
+  const discountedPrice = Math.trunc(
+    product.price * (1 - product.discountPercentage / 100)
+  );
 
   const renderDots = () => {
     if (!isHovered || product.images.length <= 1) return null;
@@ -140,8 +158,8 @@ const ProductCard = ({ product }) => {
             image={activeImage}
             alt={product.title}
             style={{ width: "288px", height: "288px", position: "relative" }}
-            onMouseEnter={handleMouseEnter} 
-            onMouseLeave={handleMouseLeave} 
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             {renderDots()}
           </CardMedia>
@@ -257,25 +275,35 @@ const ProductCard = ({ product }) => {
           gap: "8px",
         }}
       >
-        <Typography
+        <Button
           component="div"
           style={{
-            width: "71px",
+            width: isInCart ? "fit-content" : "71px",
             height: "24px",
-            backgroundColor: "blue",
-            color: "white",
+            backgroundColor: isInCart ? "white" : "blue",
+            color: isInCart ? "blue" : "white",
             display: "flex",
             flexDirection: "row",
             position: "relative",
             justifyContent: "center",
             alignItems: "center",
             gap: "4px",
+            textTransform: "lowercase",
             borderRadius: "4px",
             padding: "2px 4px 2px 4px",
           }}
+          onClick={() => {
+            // handleAddToCart();
+            addToCart(product);
+          }}
         >
-          <Cart style={{ width: "20px", height: "20px" }} />${product.price}
-        </Typography>
+          {isInCart ? (
+            <CartBlue style={{ width: "20px", height: "20px" }} />
+          ) : (
+            <Cart style={{ width: "20px", height: "20px" }} />
+          )}
+          {isInCart ? "added to cart" : `$${discountedPrice}`}
+        </Button>
         <Typography sx={{ textDecoration: "line-through" }}>
           ${product.price}
         </Typography>
