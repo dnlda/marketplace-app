@@ -9,6 +9,7 @@ const MainPage = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  
 
   const fetchProducts = async (searchTerm = "") => {
     try {
@@ -34,7 +35,6 @@ const MainPage = () => {
   return (
     <Box
       style={{
-        
         width: "100%",
         backgroundColor: "#EFEEF4",
         minHeight: "100vh",

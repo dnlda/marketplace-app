@@ -4,7 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import debounce from "lodash.debounce";
 
-const SearchInput = ({ onSearch }) => {
+const SearchInput = ({ onSearch, onSearchActiveChange }) => {
   const [search, setSearch] = useState("");
   const [isSearchActive, setSearchActive] = useState(false);
 
@@ -17,15 +17,24 @@ const SearchInput = ({ onSearch }) => {
   const clearSearch = () => {
     setSearch("");
     onSearch("");
-    setSearchActive(false);
+    const newSearchActiveValue = !isSearchActive;
+    setSearchActive(newSearchActiveValue);
+    if (onSearchActiveChange) {
+      onSearchActiveChange(newSearchActiveValue);
+    }
   };
 
   const toggleSearch = () => {
-    setSearchActive(!isSearchActive);
+    const newSearchActiveValue = !isSearchActive;
+    setSearchActive(newSearchActiveValue);
+    if (onSearchActiveChange) {
+      onSearchActiveChange(newSearchActiveValue);
+    }
   };
 
   return (
-    <Box style={{ width: "100%", position: "relative", margin: "0px 14px 0px 14px" }}>
+    <
+    >
       {isSearchActive ? (
         <TextField
           value={search}
@@ -34,6 +43,8 @@ const SearchInput = ({ onSearch }) => {
             height: "28px",
             width: "100%",
             backgroundColor: "white",
+            marginLeft: "14px",
+
           }}
           onChange={(e) => setSearch(e.target.value)}
           onBlur={() => handleSearch(search)}
@@ -55,7 +66,7 @@ const SearchInput = ({ onSearch }) => {
             ),
           }}
         />
-      ) : (
+      ) : ( 
         <Box
           style={{
             display: "inline-flex",
@@ -72,8 +83,8 @@ const SearchInput = ({ onSearch }) => {
             <SearchIcon />
           </IconButton>
         </Box>
-      )}
-    </Box>
+      )} 
+    </>
   );
 };
 

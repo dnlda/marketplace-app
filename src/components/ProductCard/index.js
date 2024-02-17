@@ -21,7 +21,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   overflow: "hidden",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "flex-start",
+  justifyContent: "space-between",
 }));
 
 const Cheap = styled(CardContent)(({ theme }) => ({
@@ -38,6 +38,10 @@ const Cheap = styled(CardContent)(({ theme }) => ({
 
 const ProductCard = ({ product }) => {
   const [isDefaultCard, setIsDefaultCard] = useState(true);
+  const [activeDot, setActiveDot] = useState(0);
+  const [activeImage, setActiveImage] = useState(product.images[0]);
+  const [isHovered, setIsHovered] = useState(false);
+
 
   const handleShowDefault = () => {
     setIsDefaultCard(true);
@@ -47,9 +51,54 @@ const ProductCard = ({ product }) => {
     setIsDefaultCard(false);
   };
 
-  const calculateDiscountedPrice = (price, discountPercentage) => {
-    const discountedPrice = price - (price * (discountPercentage /  100));
-    return Math.floor(discountedPrice);
+  const handleDotClick = (index) => {
+    setActiveDot(index);
+    setActiveImage(product.images[index]);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false); 
+  };
+
+  const renderDots = () => {
+    if (!isHovered || product.images.length <= 1) return null;
+
+    const totalDots = product.images.length;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          bottom: "0",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "4px",
+          marginBottom: "10px",
+        }}
+      >
+        {Array.from({ length: totalDots }, (_, i) => (
+          <div
+            key={i}
+            style={{
+              width: "8px",
+              height: "8px",
+              backgroundColor: activeDot === i ? "#5C6970" : "white",
+              border: "1px solid #5C6970",
+              borderRadius: "50%",
+              margin: "0  4px",
+              cursor: "pointer",
+            }}
+            onClick={() => handleDotClick(i)}
+          />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -87,11 +136,15 @@ const ProductCard = ({ product }) => {
             </Typography>
           </Cheap>
           <CardMedia
-            component="img"
-            image={product.thumbnail}
+            component="div"
+            image={activeImage}
             alt={product.title}
-            style={{ width: "288px", height: "288px" }}
-          />
+            style={{ width: "288px", height: "288px", position: "relative" }}
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave} 
+          >
+            {renderDots()}
+          </CardMedia>
         </>
       )}
       <Cheap
@@ -202,7 +255,6 @@ const ProductCard = ({ product }) => {
           position: "relative",
           alignItems: "center",
           gap: "8px",
-         
         }}
       >
         <Typography
@@ -222,7 +274,7 @@ const ProductCard = ({ product }) => {
             padding: "2px 4px 2px 4px",
           }}
         >
-          <Cart style={{ width: "20px", height: "20px" }} />${calculateDiscountedPrice(product.price, product.discountPercentage)}
+          <Cart style={{ width: "20px", height: "20px" }} />${product.price}
         </Typography>
         <Typography sx={{ textDecoration: "line-through" }}>
           ${product.price}
