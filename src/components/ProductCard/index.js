@@ -11,7 +11,6 @@ import { styled } from "@mui/system";
 import { ReactComponent as RatingStar } from "../../img/Star.svg";
 import { ReactComponent as Cart } from "../../img/cart.svg";
 
-// Define a styled Card component with the desired dimensions
 const StyledCard = styled(Card)(({ theme }) => ({
   width: "320px",
   height: "468px",
@@ -22,7 +21,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   overflow: "hidden",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
+  justifyContent: "flex-start",
 }));
 
 const Cheap = styled(CardContent)(({ theme }) => ({
@@ -46,6 +45,11 @@ const ProductCard = ({ product }) => {
 
   const handleShowDescription = () => {
     setIsDefaultCard(false);
+  };
+
+  const calculateDiscountedPrice = (price, discountPercentage) => {
+    const discountedPrice = price - (price * (discountPercentage /  100));
+    return Math.floor(discountedPrice);
   };
 
   return (
@@ -198,6 +202,7 @@ const ProductCard = ({ product }) => {
           position: "relative",
           alignItems: "center",
           gap: "8px",
+         
         }}
       >
         <Typography
@@ -217,7 +222,7 @@ const ProductCard = ({ product }) => {
             padding: "2px 4px 2px 4px",
           }}
         >
-          <Cart style={{ width: "20px", height: "20px" }} />${product.price}
+          <Cart style={{ width: "20px", height: "20px" }} />${calculateDiscountedPrice(product.price, product.discountPercentage)}
         </Typography>
         <Typography sx={{ textDecoration: "line-through" }}>
           ${product.price}

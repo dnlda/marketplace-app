@@ -1,11 +1,9 @@
-import ProductsComponent from "./components/Product";
+import MainPage from "./components/MainPage";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-      </header>
-      <ProductsComponent />
+      <MainPage />
     </div>
   );
 }
